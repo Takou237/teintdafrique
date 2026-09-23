@@ -5,6 +5,7 @@ build/
 .cache/
 .env*
 !.env.example
+!.env.production
 .vite/
 vite.config.*.timestamp-*
 *.tsbuildinfo
@@ -29,5 +30,6 @@ logs/
 
 # Backend admin (api/) — voir plan.md et api/README.md
 api/config.php
+api/config.lws.php
 api/uploads/*
 !api/uploads/.gitkeep

@@ -54,8 +54,6 @@ function load_config(): array
 
 $config = load_config();
 
-$config = load_config();
-
 session_name($config['session_name']);
 session_set_cookie_params([
     'httponly' => true,
@@ -69,8 +67,8 @@ $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 if ($origin !== '' && in_array($origin, $config['cors_origins'], true)) {
     header('Access-Control-Allow-Origin: ' . $origin);
     header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token, X-Requested-With');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 }
 header('Content-Type: application/json; charset=utf-8');
 
