@@ -15,8 +15,9 @@ $config = require __DIR__ . '/config.php';
 session_name($config['session_name']);
 session_set_cookie_params([
     'httponly' => true,
-    'samesite' => 'Strict',
-    // 'secure' => true, // à activer une fois le site servi en HTTPS (voir docs/host.md)
+    'samesite' => $config['session_same_site'] ?? 'Strict',
+    // En cross-site (front Vercel + API ailleurs) : SameSite=None + Secure obligatoires (voir config.php)
+    'secure' => $config['session_secure'] ?? false,
 ]);
 session_start();
 

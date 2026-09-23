@@ -14,9 +14,18 @@ return [
     // Origines autorisées à appeler l'API avec des identifiants (cookies de session).
     // Le site public ET l'admin sont servis depuis la même origine (l'admin vit sous /admin,
     // voir host.md) : une seule entrée par environnement suffit.
+    // Si le front est hébergé ailleurs que l'API (ex. front Vercel, API sur un hébergeur PHP),
+    // ajouter l'origine exacte du front (https://monprojet.vercel.app).
     'cors_origins' => [
         'http://localhost:8443',
         'https://teintdafrique.com',
+        'https://teintdafrique.vercel.app',
     ],
     'session_name' => 'tda_admin_session',
+    // Cookies de session. En local (http://localhost) : SameSite=Strict, secure=false.
+    // Si le front et l'API sont sur des ORIGINES différentes (ex. front Vercel + API ailleurs),
+    // les cookies doivent passer en cross-site : 'session_same_site' => 'None',
+    // 'session_secure' => true (HTTPS obligatoire des deux côtés).
+    'session_same_site' => 'Strict',
+    'session_secure' => false,
 ];
