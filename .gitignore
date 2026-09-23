@@ -1,0 +1,31 @@
+node_modules/
+dist/
+build/
+.cache/
+.env*
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+.claude-replay.*
+.tmp-*
+# Figma Make : seule la config site.json (requise par vite.config.ts pour builder
+# hors de la plateforme) est commitée ; le reste de .figma/ reste local.
+/.figma/*
+!/.figma/make/
+/.figma/make/*
+!/.figma/make/site.json
+
+# Platform-managed agentplat state, not project source. In the
+# client-initiated single-repo workspace layout (make's `Path: "."` spec) the
+# repo root IS the workspace root, so these land inside this repo rather than
+# beside it.
+/.plugins/
+/.opencode-skills/
+
+# Backend admin (api/) — voir plan.md et api/README.md
+api/config.php
+api/uploads/*
+!api/uploads/.gitkeep
