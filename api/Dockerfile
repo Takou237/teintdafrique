@@ -2,7 +2,13 @@ FROM php:8.2-cli
 
 # Backend PHP de l'API — servi par le serveur PHP intégré (php -S + router.php).
 # Robuste sur Railway : pas d'Apache, donc pas de problème de MPM (AH00534).
-COPY . /var/www/html/
+#
+# Railway peut construire l'image depuis la racine du dépôt (défaut) ou depuis
+# le dossier api/ (réglage « Root Directory »). On copie le contexte tel quel,
+# puis on normalise : l'API doit finir dans /var/www/html avec router.php à sa racine.
+COPY . /app
+RUN if [ -f /app/api/router.php ]; then mv /app/api /var/www/html; else mv /app /var/www/html; fi
+
 WORKDIR /var/www/html
 
 EXPOSE 8080
