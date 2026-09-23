@@ -3,6 +3,7 @@
  * Le jeton CSRF est gardé en mémoire (jamais en localStorage, voir docs/plan.md §6.1) et rejoué
  * sur chaque requête de modification via le header X-CSRF-Token.
  */
+import { apiUrl, mapAssetUrls } from '@/lib/config'
 
 export interface Product {
   id: number
@@ -107,7 +108,7 @@ let csrfToken: string | null = null
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const isFormData = options.body instanceof FormData
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     ...options,
     credentials: 'include',
     headers: {
@@ -120,7 +121,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   if (!res.ok || !body?.success) {
     throw new ApiError(body?.error ?? `api_error_${res.status}`, res.status)
   }
-  return body.data as T
+  return mapAssetUrls(body.data) as T
 }
 
 // --- Authentification ---

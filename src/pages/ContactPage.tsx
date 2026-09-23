@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useContent } from '@/hooks/useContent'
 import { useSettings } from '@/hooks/useSettings'
+import { apiUrl } from '@/lib/config'
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false)
@@ -198,7 +199,7 @@ export default function ContactPage() {
                       setSending(true)
                       setSendError(null)
                       try {
-                        const res = await fetch('/api/contact/submit.php', {
+                        const res = await fetch(apiUrl('/api/contact/submit.php'), {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify(form),

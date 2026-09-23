@@ -1,10 +1,12 @@
 import type { Gamme } from '@/data'
+import { apiUrl, mapAssetUrls } from './config'
 
 /**
  * Client de l'API du panneau d'administration (voir api/README.md pour le contrat complet).
  * En développement, Vite proxifie /api et /uploads vers le serveur PHP local (voir vite.config.ts).
  * En production, le site et l'API sont servis depuis le même domaine (voir docs/host.md), donc les
- * chemins relatifs fonctionnent sans configuration CORS particulière.
+ * chemins relatifs fonctionnent sans configuration CORS particulière — sauf si VITE_API_URL est
+ * définie (front hébergé séparément du backend, voir src/lib/config.ts).
  */
 
 export interface ApiGamme extends Omit<Gamme, 'image'> {
@@ -29,12 +31,12 @@ export interface Settings {
 }
 
 async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(path, { credentials: 'include' })
+  const res = await fetch(apiUrl(path), { credentials: 'include' })
   const body = await res.json().catch(() => null)
   if (!res.ok || !body?.success) {
     throw new Error(body?.error ?? `api_error_${res.status}`)
   }
-  return body.data as T
+  return mapAssetUrls(body.data) as T
 }
 
 export function fetchGammes(): Promise<ApiGamme[]> {
