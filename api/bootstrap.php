@@ -10,7 +10,51 @@ declare(strict_types=1);
 error_reporting(E_ALL);
 ini_set('display_errors', '0'); // ne jamais laisser fuir une trace PHP au client
 
-$config = require __DIR__ . '/config.php';
+/**
+ * Charge la config : api/config.php s'il existe (développement, hébergement mutualisé),
+ * sinon construit la config depuis des variables d'environnement (ex. Render, où le dossier
+ * api/ est déployé mais config.php, gitignoré, n'est pas présent).
+ *
+ * Variables d'environnement reconnues via Environnement seulement :
+ *   DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
+ *   CORS_ORIGINS        (liste d'origines séparées par des virgules, ex. https://site.vercel.app)
+ *   SESSION_NAME, SESSION_SAME_SITE, SESSION_SECURE (true/false)
+ */
+function load_config(): array
+{
+    $configPath = __DIR__ . '/config.php';
+    if (is_file($configPath)) {
+        return require $configPath;
+    }
+
+    $env = static function (string $key, string $default = ''): string {
+        $value = getenv($key);
+        return ($value !== false && $value !== '') ? (string)$value : $default;
+    };
+
+    $sameSite = $env('SESSION_SAME_SITE', 'Strict');
+    $cors = array_values(array_filter(array_map('trim', explode(',', $env('CORS_ORIGINS', 'https://teintdafrique.vercel.app')))));
+
+    return [
+        'db' => [
+            'host' => $env('DB_HOST', '127.0.0.1'),
+            'port' => (int)$env('DB_PORT', '3306'),
+            'name' => $env('DB_NAME', 'teint_dafrique'),
+            'user' => $env('DB_USER', 'root'),
+            'pass' => $env('DB_PASS', ''),
+            'charset' => 'utf8mb4',
+        ],
+        'cors_origins' => $cors,
+        'session_name' => $env('SESSION_NAME', 'tda_admin_session'),
+        // SameSite=None impose Secure dans les navigateurs modernes : on force Secure dans ce cas.
+        'session_same_site' => $sameSite,
+        'session_secure' => $env('SESSION_SECURE', 'false') === 'true' || $sameSite === 'None',
+    ];
+}
+
+$config = load_config();
+
+$config = load_config();
 
 session_name($config['session_name']);
 session_set_cookie_params([

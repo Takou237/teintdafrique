@@ -17,4 +17,10 @@ Options -Indexes
 
   # Aucune exécution PHP sous uploads/ (les fichiers y sont réencodés en images pures côté serveur)
   RewriteRule ^uploads/.*\.(php|phtml|php[0-9])$ - [F,L]
+
+  # Front hébergé ailleurs (ex. Vercel) : le front appelle /api/<route>.php alors que ce dossier
+  # api/ EST la racine web (ex. Render). On retire le préfixe /api.
+  # Sans effet sur un hébergement où api/ est un sous-dossier (ex. LWS) : le chemin per-repertoire
+  # ne commence pas par "api/".
+  RewriteRule ^api/(.*)$ /$1 [L]
 </IfModule>
